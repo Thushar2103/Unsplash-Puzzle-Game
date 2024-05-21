@@ -121,13 +121,18 @@ class _PuzzlePageState extends State<PuzzlePage> {
       appBar: AppBar(
         title: const Text('Puzzle Game'),
         actions: [
-          MoveWindow(
-            child: Container(
-              width: MediaQuery.of(context).size.width / 3,
+          if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
+            Row(
+              children: [
+                MoveWindow(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / 3,
+                  ),
+                ),
+                MinimizeWindowButton(),
+                CloseWindowButton()
+              ],
             ),
-          ),
-          MinimizeWindowButton(),
-          CloseWindowButton()
         ],
       ),
       body: _isLoading
