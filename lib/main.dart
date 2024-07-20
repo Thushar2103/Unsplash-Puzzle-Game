@@ -10,6 +10,7 @@ import 'package:image/image.dart' as img;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'dart:io';
+import 'package:flutter_skeleton_ui/flutter_skeleton_ui.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -17,7 +18,7 @@ void main() async {
 
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     doWhenWindowReady(() {
-      const initialSize = Size(390, 600);
+      const initialSize = Size(380, 600);
       appWindow.minSize = initialSize;
       appWindow.maxSize = initialSize;
       appWindow.size = initialSize;
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-        title: 'Puzzle Game',
+        title: 'Tascuit Puzzle',
         debugShowCheckedModeBanner: false,
         home: PuzzlePage());
   }
@@ -98,7 +99,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
     final double pieceWidth = image.width.toDouble() / 4;
     final double pieceHeight = image.height.toDouble() / 4;
 
-    _imagePieces = List.generate(15, (index) {
+    _imagePieces = List.generate(16, (index) {
       final int row = index ~/ 4;
       final int col = index % 4;
       final img.Image piece = img.copyCrop(image, (col * pieceWidth).toInt(),
@@ -119,7 +120,19 @@ class _PuzzlePageState extends State<PuzzlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Puzzle Game'),
+        title: const Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'Tascuit',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              'Puzzle',
+              style: TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
         actions: [
           if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
             Row(
@@ -136,15 +149,29 @@ class _PuzzlePageState extends State<PuzzlePage> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: _buildPuzzleGrid(),
+          // ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: SkeletonAvatar(
+                style: SkeletonAvatarStyle(
+                    height: MediaQuery.of(context).size.height / 1.2,
+                    width: MediaQuery.of(context).size.width / 1.1),
+              ),
+            )
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: _buildPuzzleGrid(),
+              ),
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _displayActualImage,
-        child: const Icon(Icons.image),
-      ),
+      floatingActionButton: _isLoading
+          ? null
+          : FloatingActionButton(
+              shape: const CircleBorder(),
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+              onPressed: _displayActualImage,
+              child: const Icon(Icons.image),
+            ),
     );
   }
 
@@ -204,6 +231,8 @@ class _PuzzlePageState extends State<PuzzlePage> {
         ),
         ElevatedButton(
           style: const ButtonStyle(
+              shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(5)))),
               backgroundColor: MaterialStatePropertyAll(Colors.red),
               foregroundColor: MaterialStatePropertyAll(Colors.white)),
           onPressed: _initializeGame,
