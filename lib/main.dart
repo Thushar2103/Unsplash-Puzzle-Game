@@ -202,7 +202,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(
-          height: 30,
+          height: 50,
         ),
         Expanded(
           child: GridView.builder(
