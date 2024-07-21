@@ -11,10 +11,20 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'dart:io';
 import 'package:flutter_skeleton_ui/flutter_skeleton_ui.dart';
+import 'package:provider/provider.dart';
+import 'package:puzzle_game/utils/theme_provider.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final themeProvider = ThemeProvider(); // Create an instance of ThemeProvider
+  await themeProvider.loadThemeMode();
   await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider.value(
+      value: themeProvider,
+      child: const MyApp(),
+    ),
+  );
 
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
     doWhenWindowReady(() {
@@ -28,20 +38,37 @@ void main() async {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final ValueNotifier<ThemeMode> _themeModeNotifier =
+      ValueNotifier(ThemeMode.system);
+  @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-        title: 'Tascuit Puzzle',
-        debugShowCheckedModeBanner: false,
-        home: PuzzlePage());
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, _) {
+        return MaterialApp(
+            title: 'Ranzle',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            themeMode: themeProvider.themeMode,
+            home: PuzzlePage(
+              themeModeNotifier: _themeModeNotifier,
+            ));
+      },
+    );
   }
 }
 
 class PuzzlePage extends StatefulWidget {
-  const PuzzlePage({super.key});
+  final ValueNotifier<ThemeMode> themeModeNotifier;
+  const PuzzlePage({super.key, required this.themeModeNotifier});
 
   @override
   _PuzzlePageState createState() => _PuzzlePageState();
@@ -67,7 +94,6 @@ class _PuzzlePageState extends State<PuzzlePage> {
     });
 
     final String apiKey = dotenv.env['unsplash_api'].toString();
-    // final String apiKey = 'HVKxqFepaiBeSghcARNzOFTY2CUvU7URmKPT5V61AzA';
     final String apiUrl =
         'https://api.unsplash.com/photos/random?client_id=$apiKey';
 
@@ -82,7 +108,6 @@ class _PuzzlePageState extends State<PuzzlePage> {
       const Center(
         child: Text('Failed to load'),
       );
-      print('Error fetching image: $e');
     }
 
     setState(() {
@@ -120,18 +145,15 @@ class _PuzzlePageState extends State<PuzzlePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              'Tascuit',
+        title: MouseRegion(
+          cursor: MaterialStateMouseCursor.clickable,
+          child: GestureDetector(
+            onTap: () => menu(context),
+            child: const Text(
+              'Ranzle',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            Text(
-              'Puzzle',
-              style: TextStyle(fontSize: 12),
-            ),
-          ],
+          ),
         ),
         actions: [
           if (Platform.isWindows || Platform.isLinux || Platform.isMacOS)
@@ -149,7 +171,6 @@ class _PuzzlePageState extends State<PuzzlePage> {
         ],
       ),
       body: _isLoading
-          // ? const Center(child: CircularProgressIndicator())
           ? Center(
               child: SkeletonAvatar(
                 style: SkeletonAvatarStyle(
@@ -247,9 +268,17 @@ class _PuzzlePageState extends State<PuzzlePage> {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
+          shape:
+              ContinuousRectangleBorder(borderRadius: BorderRadius.circular(5)),
           content: Image.network(_imageUrl),
           actions: [
             ElevatedButton(
+              style: ButtonStyle(
+                  shape: MaterialStateProperty.all(ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.circular(5))),
+                  backgroundColor: const MaterialStatePropertyAll(Colors.red),
+                  foregroundColor:
+                      const MaterialStatePropertyAll(Colors.white)),
               onPressed: () => Navigator.pop(context),
               child: const Text('Close'),
             ),
@@ -297,6 +326,8 @@ class _PuzzlePageState extends State<PuzzlePage> {
       context: context,
       builder: (context) {
         return AlertDialog(
+          shape:
+              ContinuousRectangleBorder(borderRadius: BorderRadius.circular(5)),
           title: const Text('Congratulations!'),
           content: const Text('You solved the puzzle.'),
           actions: [
@@ -307,6 +338,67 @@ class _PuzzlePageState extends State<PuzzlePage> {
               },
               child: const Text('Play Again'),
             ),
+          ],
+        );
+      },
+    );
+  }
+
+  void menu(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape:
+              ContinuousRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          title: const Text(
+            "Menu",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            children: [
+              const ListTile(
+                leading: Icon(Icons.computer),
+                title: Text("Version"),
+                subtitle: Text("1.0"),
+              ),
+              const ListTile(
+                leading: Icon(Icons.image_rounded),
+                title: Text("Image Provider"),
+                subtitle: Text("Unsplash"),
+              ),
+              ListTile(
+                leading: const Icon(Icons.mode_edit),
+                title: const Text("Theme"),
+                subtitle: const Text("Dark/Light"),
+                trailing: Consumer<ThemeProvider>(
+                  builder: (context, themeProvider, _) {
+                    return Switch(
+                      value: themeProvider.themeMode == ThemeMode.light,
+                      onChanged: (_) {
+                        themeProvider.toggleTheme();
+                      },
+                    );
+                  },
+                ),
+              ),
+              const Spacer(),
+              const Text(
+                "Developed By",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const Text("Tascuit")
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+                style: const ButtonStyle(
+                    shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+                    foregroundColor: MaterialStatePropertyAll(Colors.white),
+                    backgroundColor: MaterialStatePropertyAll(Colors.red)),
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Close"))
           ],
         );
       },
