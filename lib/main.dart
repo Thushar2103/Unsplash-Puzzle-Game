@@ -10,13 +10,13 @@ import 'package:image/image.dart' as img;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'dart:io';
-import 'package:flutter_skeleton_ui/flutter_skeleton_ui.dart';
+import 'package:loading_animations/loading_animations.dart';
 import 'package:provider/provider.dart';
 import 'package:puzzle_game/utils/theme_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final themeProvider = ThemeProvider(); // Create an instance of ThemeProvider
+  final themeProvider = ThemeProvider();
   await themeProvider.loadThemeMode();
   await dotenv.load(fileName: ".env");
   runApp(
@@ -172,12 +172,9 @@ class _PuzzlePageState extends State<PuzzlePage> {
       ),
       body: _isLoading
           ? Center(
-              child: SkeletonAvatar(
-                style: SkeletonAvatarStyle(
-                    height: MediaQuery.of(context).size.height / 1.2,
-                    width: MediaQuery.of(context).size.width / 1.1),
-              ),
-            )
+              child: LoadingBouncingGrid.square(
+              size: 100,
+            ))
           : Center(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -206,6 +203,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
         ),
         Expanded(
           child: GridView.builder(
+            shrinkWrap: true,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
             ),
@@ -332,6 +330,11 @@ class _PuzzlePageState extends State<PuzzlePage> {
           content: const Text('You solved the puzzle.'),
           actions: [
             ElevatedButton(
+              style: const ButtonStyle(
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)))),
+                  foregroundColor: MaterialStatePropertyAll(Colors.white),
+                  backgroundColor: MaterialStatePropertyAll(Colors.red)),
               onPressed: () {
                 Navigator.pop(context);
                 _initializeGame();
@@ -361,11 +364,6 @@ class _PuzzlePageState extends State<PuzzlePage> {
                 leading: Icon(Icons.computer),
                 title: Text("Version"),
                 subtitle: Text("1.0"),
-              ),
-              const ListTile(
-                leading: Icon(Icons.image_rounded),
-                title: Text("Image Provider"),
-                subtitle: Text("Unsplash"),
               ),
               ListTile(
                 leading: const Icon(Icons.mode_edit),

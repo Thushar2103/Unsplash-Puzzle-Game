@@ -39,9 +39,9 @@ dependencies:
   image: ^3.0.0
   flutter_dotenv: ^5.1.0
   bitsdojo_window: ^0.1.6
-  flutter_skeleton_ui: ^0.0.6
   provider: ^6.1.2
   shared_preferences: ^2.2.3
+  loading_animations: ^2.2.0
 
 dev_dependencies:
   flutter_test:

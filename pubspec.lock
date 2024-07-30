@@ -158,14 +158,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  flutter_skeleton_ui:
-    dependency: "direct main"
-    description:
-      name: flutter_skeleton_ui
-      sha256: "2585c4af785dbdf38be3d8489c80e5a42798b720a4e9524cda05eb762abef39b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.6"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -240,6 +232,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
+  loading_animations:
+    dependency: "direct main"
+    description:
+      name: loading_animations
+      sha256: c62a8c1fbbe5ade3ac2814128a9aa92ee784756b11ad9e6a915b673b90005cc8
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.0"
   matcher:
     dependency: transitive
     description:
@@ -510,5 +510,5 @@ packages:
     source: hosted
     version: "6.5.0"
 sdks:
-  dart: ">=3.3.0 <3.22.0"
+  dart: ">=3.3.0 <4.0.0"
   flutter: ">=3.16.6"
