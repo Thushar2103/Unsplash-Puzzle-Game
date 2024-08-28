@@ -12,6 +12,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'dart:io';
 import 'package:loading_animations/loading_animations.dart';
 import 'package:provider/provider.dart';
+import 'package:puzzle_game/utils/constraints.dart';
 import 'package:puzzle_game/utils/theme_provider.dart';
 
 void main() async {
@@ -149,9 +150,12 @@ class _PuzzlePageState extends State<PuzzlePage> {
           cursor: MaterialStateMouseCursor.clickable,
           child: GestureDetector(
             onTap: () => menu(context),
-            child: const Text(
+            child: Text(
               'Ranzle',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 20,
+                  fontFamily: 'Poppins'),
             ),
           ),
         ),
@@ -171,10 +175,14 @@ class _PuzzlePageState extends State<PuzzlePage> {
         ],
       ),
       body: _isLoading
-          ? Center(
-              child: LoadingBouncingGrid.square(
-              size: 100,
-            ))
+          ? Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Center(
+                  heightFactor: 200,
+                  child: LoadingBouncingGrid.square(
+                    size: MediaQuery.of(context).size.width / 1.1,
+                  )),
+            )
           : Center(
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -244,9 +252,12 @@ class _PuzzlePageState extends State<PuzzlePage> {
             },
           ),
         ),
-        const SizedBox(
+        SizedBox(
           height: 25,
-          child: Text('Drag and drop the puzzle'),
+          child: Text(
+            'Drag and drop the puzzle',
+            style: fontpoppins,
+          ),
         ),
         ElevatedButton(
           style: const ButtonStyle(
@@ -255,7 +266,10 @@ class _PuzzlePageState extends State<PuzzlePage> {
               backgroundColor: MaterialStatePropertyAll(Colors.red),
               foregroundColor: MaterialStatePropertyAll(Colors.white)),
           onPressed: _initializeGame,
-          child: const Text('Try Other'),
+          child: Text(
+            'Try Other',
+            style: fontpoppins,
+          ),
         ),
       ],
     );
@@ -278,7 +292,10 @@ class _PuzzlePageState extends State<PuzzlePage> {
                   foregroundColor:
                       const MaterialStatePropertyAll(Colors.white)),
               onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
+              child: Text(
+                'Close',
+                style: fontpoppins,
+              ),
             ),
           ],
         ),
@@ -326,8 +343,14 @@ class _PuzzlePageState extends State<PuzzlePage> {
         return AlertDialog(
           shape:
               ContinuousRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          title: const Text('Congratulations!'),
-          content: const Text('You solved the puzzle.'),
+          title: Text(
+            'Congratulations!',
+            style: fontpoppins,
+          ),
+          content: Text(
+            'You solved the puzzle.',
+            style: fontpoppins,
+          ),
           actions: [
             ElevatedButton(
               style: const ButtonStyle(
@@ -339,7 +362,10 @@ class _PuzzlePageState extends State<PuzzlePage> {
                 Navigator.pop(context);
                 _initializeGame();
               },
-              child: const Text('Play Again'),
+              child: Text(
+                'Play Again',
+                style: fontpoppins,
+              ),
             ),
           ],
         );
@@ -356,37 +382,58 @@ class _PuzzlePageState extends State<PuzzlePage> {
               ContinuousRectangleBorder(borderRadius: BorderRadius.circular(5)),
           title: const Text(
             "Menu",
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+                fontFamily: 'Poppins'),
           ),
-          content: Column(
-            children: [
-              const ListTile(
-                leading: Icon(Icons.computer),
-                title: Text("Version"),
-                subtitle: Text("1.0"),
-              ),
-              ListTile(
-                leading: const Icon(Icons.mode_edit),
-                title: const Text("Theme"),
-                subtitle: const Text("Dark/Light"),
-                trailing: Consumer<ThemeProvider>(
-                  builder: (context, themeProvider, _) {
-                    return Switch(
-                      value: themeProvider.themeMode == ThemeMode.light,
-                      onChanged: (_) {
-                        themeProvider.toggleTheme();
-                      },
-                    );
-                  },
+          content: SizedBox(
+            height: 250,
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.computer),
+                  title: Text(
+                    "Version",
+                    style: fontpoppins,
+                  ),
+                  subtitle: Text(
+                    "1.0",
+                    style: fontpoppins,
+                  ),
                 ),
-              ),
-              const Spacer(),
-              const Text(
-                "Developed By",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const Text("Tascuit")
-            ],
+                ListTile(
+                  leading: const Icon(Icons.mode_edit),
+                  title: Text(
+                    "Theme",
+                    style: fontpoppins,
+                  ),
+                  subtitle: Text(
+                    "Dark/Light",
+                    style: fontpoppins,
+                  ),
+                  trailing: Consumer<ThemeProvider>(
+                    builder: (context, themeProvider, _) {
+                      return Switch(
+                        value: themeProvider.themeMode == ThemeMode.light,
+                        onChanged: (_) {
+                          themeProvider.toggleTheme();
+                        },
+                      );
+                    },
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  "Developed By",
+                  style: fontpoppins,
+                ),
+                Text(
+                  "Tascuit",
+                  style: fontpoppins,
+                )
+              ],
+            ),
           ),
           actions: [
             ElevatedButton(
@@ -396,7 +443,10 @@ class _PuzzlePageState extends State<PuzzlePage> {
                     foregroundColor: MaterialStatePropertyAll(Colors.white),
                     backgroundColor: MaterialStatePropertyAll(Colors.red)),
                 onPressed: () => Navigator.pop(context),
-                child: const Text("Close"))
+                child: Text(
+                  "Close",
+                  style: fontpoppins,
+                ))
           ],
         );
       },
