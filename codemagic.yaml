@@ -5,9 +5,15 @@ workflows:
       flutter: stable
       xcode: latest
       cocoapods: default
+      groups:
+        - env_secrets # Must include `unsplash_api`
       vars:
-        APP_ID: "com.example.puzzle_game" # Change to your bundle ID
+        APP_ID: "com.example.puzzle_game"
     scripts:
+      - name: Generate .env from secure variables
+        script: |
+          echo "Generating .env file"
+          echo "unsplash_api=$unsplash_api" > .env
       - name: Install dependencies
         script: |
           flutter pub get
@@ -16,6 +22,7 @@ workflows:
           cd ..
       - name: Build iOS Release
         script: |
+          flutter clean
           flutter build ios --release --no-codesign
     artifacts:
       - build/ios/iphoneos/Runner.app
