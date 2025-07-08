@@ -150,7 +150,7 @@ class _PuzzlePageState extends State<PuzzlePage> {
           cursor: MaterialStateMouseCursor.clickable,
           child: GestureDetector(
             onTap: () => menu(context),
-            child: Text(
+            child: const Text(
               'Ranzle',
               style: TextStyle(
                   fontWeight: FontWeight.w900,
@@ -177,11 +177,14 @@ class _PuzzlePageState extends State<PuzzlePage> {
       body: _isLoading
           ? Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Center(
-                  heightFactor: 200,
-                  child: LoadingBouncingGrid.square(
+              child: Column(
+                children: [
+                  const SizedBox(height: 50),
+                  LoadingBouncingGrid.square(
                     size: MediaQuery.of(context).size.width / 1.1,
-                  )),
+                  ),
+                ],
+              ),
             )
           : Center(
               child: Padding(
